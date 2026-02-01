@@ -42,23 +42,30 @@ mask = createMask(roi);
 
 %% Create pupil dilation signal
 
-pupil_raw = [];
+pupil = [];
 for k=3:(size(struct2table(filenames), 1)) % for loop starts from 3 for a reason
      run_path = strcat(root_folder, filesep, filenames(k).name);
      t = Tiff(run_path,'r');
      imageData = im2uint8(read(t)); % read tiff file
      if max(imageData(:)) > 5 % skips completely black frames
         im_tresh = imageData;
-        im_tresh(imageData<25) = 255;
         im_tresh(~mask) = 0; % overlay mask on image
         img_values = im_tresh(im_tresh>=1); % leave behind zero values (non-ROI pixels)
-        pupil_raw(1,k-2) = sum(img_values); % pupil area = sum of white pixels after binarization
+        img_values(img_values<=45) = 1;  % set pupil values to 1, regardless of pixel intensity
+        img_values(img_values>45) = 0;  % leave non-pupil values behind      
+        pupil(1,k-2) = sum(img_values); % pupil area = sum of white pixels after binarization
      end
 end
 
 clear run_path t imageData im_tresh img_values
 
 disp('Done. Yay!')
+
+%% Blinking Correction
+
+pupil = pupil(:);                % ensure column vector
+pupil = (pupil - min(pupil)) / (max(pupil) - min(pupil));
+pupil_raw = blinking(pupil);
 
 %% Filter pupil signal
 

@@ -42,7 +42,7 @@ mask = createMask(roi);
 
 %% Create pupil dilation signal
 
-pupil_raw = [];
+pupil = [];
 for k=3:(size(struct2table(filenames), 1))
      run_path = strcat(root_folder, filesep, filenames(k).name);
      t = Tiff(run_path,'r');
@@ -53,13 +53,20 @@ for k=3:(size(struct2table(filenames), 1))
         img_values = img_adj(img_adj >=1); % leave behind zero values (non-ROI pixels)
         T = adaptthresh(img_values, 0.5); % sensitivity = [0 1], select higher value for smoother signal
         BW = imbinarize(img_values, T); % binarize image values according to adaptive threshold
-        pupil_raw(1,k-2) = sum(BW); % pupil area = sum of white pixels after binarization
+        pupil(1,k-2) = sum(BW); % pupil area = sum of white pixels after binarization
      end
 end
 
 clear imageData img_adj img_values BW T t k
 
 disp('Done. Yay!')
+
+%% Blinking Correction
+
+pupil = pupil(:);                % ensure column vector
+pupil = (pupil - min(pupil)) / (max(pupil) - min(pupil));
+pupil_raw = blinking(pupil);
+
 
 %% Filter pupil signal
 

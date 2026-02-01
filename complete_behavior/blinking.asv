@@ -1,0 +1,38 @@
+function pupil_clean = blinking(pupil)
+% REMOVE_BLINKS_HOLD
+% Replaces pupil values during eye blinks by holding the last valid value.
+%
+% INPUT:
+%   pupil : 1D array, pupil size normalized to [0, 1]
+%
+% OUTPUT:
+%   pupil_clean : blink-corrected pupil signal
+
+pupil = pupil(:)*10;                % ensure column vector
+pupil_clean = pupil;
+
+% ---- parameters ----
+drop_thresh = 0.3;                % sudden drop threshold
+hold_len = 5;                    % number of samples to replace
+
+dp = [0; diff(pupil)];
+
+
+for i = 1:length(pupil)-hold_len
+
+    blink_detected = (dp(i) > drop_thresh);
+    if blink_detected
+%         last_good = pupil_clean(i-1);
+
+        % Replace next hold_len samples (stay in bounds)
+%         idx_end = min(i + hold_len - 1, length(pupil));
+        pupil_clean(i:i+hold_len) = 0;
+
+        % Skip ahead to avoid repeated detection
+        i = i+hold_len + 1;
+    else
+        i = i + 1;
+    end
+end
+
+end
