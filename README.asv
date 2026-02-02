@@ -1,0 +1,30 @@
+# Behavior tracking for various mouse experiments
+
+This repository contains an script-based program for tracking pupil dilation and whisker motion detection.
+
+## Navigation 
+
+Recreations and adaptations of published figures with added ACh neuromodulation:
+
+- complete_behavior - based on Figure 2 from _Dudai et al. 2022_
+- pupil - based on Figure 4 from _Williams & Fletcher 2019_
+- whisking - based on Figure 5 from _Hay et al. 2011_
+
+All figures have been adapted to include the effects of ACh neuromodulation
+
+## Steady-State Modeling
+
+The goal of the steady-state simulations is to observe **spontaneous calcium spikes** in the dendrites. Once a sufficient number of spikes are generated, translation to the frequency domain is possible.
+
+- Figure 4 - simulates calcium spikes by injecting noisy currents & varying ACh levels
+- L5PC Frequency Analysis - computes power spectra from calcium signals to analyze ACh dependence
+
+## Work in Progress (WIP)
+
+- Scripts marked with prefix _wip-_ are work in progress and may not run as expected. Use with caution.
+
+## Visual Overview
+
+A visual overview of script connectivity:
+
+![graph representation of functions](graphviz_color.png)
